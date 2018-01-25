@@ -2,6 +2,7 @@ const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 const buildDir = 'dist';
 
@@ -23,6 +24,15 @@ module.exports = {
         query: {
           presets: ['react', 'env']
         }
+      },
+      {
+        test: /\.css$/,
+        use: ExtractTextPlugin.extract({
+          fallback: 'style-loader',
+          use: [
+            { loader: 'css-loader', options: { minimize: true } }
+          ]
+        })
       }
     ]
   },
@@ -30,7 +40,8 @@ module.exports = {
     new CleanWebpackPlugin([buildDir]),
     new HtmlWebpackPlugin({
       template: 'index.html',
-    })
+    }),
+    new ExtractTextPlugin("styles.css")
   ],
   resolve: {
     extensions: ['.js', '.jsx']
@@ -41,7 +52,8 @@ module.exports = {
   devServer: {
     historyApiFallback: true,
     contentBase: buildDir,
-    port: 9000
+    port: 9000,
+    compress: true
   },
   devtool: 'inline-source-map'
 };
